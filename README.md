@@ -1,6 +1,4 @@
-# ds9cli
-
-Command-line helpers for DS9
+# ds9cli: Command-line helpers for DS9
 
 I've had trouble installing the latest versions of the [XPA
 tools](https://ds9.si.edu/doc/ref/xpa.html) for interacting with open DS9
