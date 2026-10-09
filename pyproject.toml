@@ -32,6 +32,7 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 dependencies = [
     "astropy",
+    "pyvo",
     "ds9samp"
 ]
 dynamic = ["version"]
