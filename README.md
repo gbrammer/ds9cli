@@ -15,7 +15,7 @@ loading files and easily manipulating the DS9 display.
 $ pip install git+https://github.com/gbrammer/ds9cli.git
 ```
 
-Verify that the scripts were installed:
+Verify that the shell scripts were installed:
 
 ```bash
 $ which dset
