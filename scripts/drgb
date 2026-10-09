@@ -1,3 +1,11 @@
 #!/bin/bash
 
-echo $@
+dload $1 -rgb -r
+dscale
+
+dload $2 -rgb -g
+dscale
+
+dload $3 -rgb -b
+dscale
+

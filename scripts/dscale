@@ -3,7 +3,6 @@
 import sys
 import astropy.io.fits as pyfits
 import ds9samp
-import roman_datamodels
 import numpy as np
 
 args = sys.argv.copy()
