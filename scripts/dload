@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import astropy.io.fits as pyfits
+import ds9samp
+import numpy as np
+
+try:
+    import roman_datamodels
+    HAS_ROMAN = True
+except ImportError:
+    HAS_ROMAN = False
+
+args = sys.argv.copy()
+
+HELP = """
+Display normal FITS and Roman ASDF files in DS9.
+
+Notes:
+  - For Roman ASDF files, the file is displayed with a header generated from `img.meta.wcs.to_fits_sip()`
+
+Usage:
+  $ dload r0003201001001001004_0004_wfi16_f106_cal.asdf  [--info]  # print asdf info
+  
+  # display a specific image attribute (e.g., data, dq, err, var_poisson, chisq, dumo)
+  
+  $ dload r0003201001001001004_0004_wfi16_f106_cal.asdf[data]
+  $ dload r0003201001001001004_0004_wfi16_f106_cal.asdf --ext=data
+
+  $ dload {file} --frame                # load into new frame
+  $ dload {file} --frame=1              # frame 1
+  $ dload {file} [-rgb] [-r] [-g] [-b]  # rgb channel, -rgb creates new RGB frame
+"""
+
+for a in args:
+    if a in ["-h", "--help"]:
+        print(HELP)
+        exit()
+
+ext = "data"
+for a in args:
+    if a.startswith("--ext"):
+        ext = a.split("=")[1]
+
+# Parse extension from xxxxx.asdf[ext]
+file_ = args[1]
+if file_.endswith("]") & ("asdf[" in file_):
+    file_, ext = file_.split("[")
+    ext = ext[:-1]
+
+frame = None
+for a in args:
+    if a.startswith("--frame") | a.startswith("-f"):
+        frame = "frame "
+        if "=" in a:
+            frame = "frame " + a.split("=")[1]
+        else:
+            frame = "frame new"
+
+if "-rgb" in args:
+    frame = None
+
+with ds9samp.ds9samp() as ds9:
+
+    if frame is not None:
+        ds9.set(frame)
+
+    set_rgb = False
+
+    if "-rgb" in args:
+        ds9.set("rgb")
+        set_rgb = True
+
+    for rgbc in ["red", "green", "blue"]:
+        if "-" + rgbc[0] in args:
+            set_rgb = True
+            ds9.set(f"rgb channel {rgbc}")
+
+    if set_rgb:
+        ds9.set("rgb lock colorbar yes")
+
+    if file_.split(".")[-1].startswith("asdf"):
+        if not HAS_ROMAN:
+            raise ImportError("import roman_datamodels Failed!")
+
+        with roman_datamodels.open(file_) as img:
+
+            if "--info" in args:
+                img.info()
+
+            data_ = getattr(img, ext)
+            if isinstance(data_.dtype, np.dtypes.Float16DType):
+                data_ = data_.astype(np.float32)
+
+            header_ = img.meta.wcs.to_fits_sip()
+
+            hdu = pyfits.ImageHDU(
+                data=data_,
+                header=header_,
+                name=",".join([os.path.basename(file_), ext])
+            )
+
+            ds9.send_fits(hdu)
+    else:
+        # Normal FITS file
+        ds9.set(f"file {file_}")

@@ -1,0 +1,245 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import ds9samp
+
+args = sys.argv.copy()
+
+HELP = """
+Manage DS9 regions
+==================
+
+Usage:
+======
+
+# Load a region file, optionally delete existing before loading new
+    
+    $ dreg ds9.reg [-d/--delete]
+    
+# Run a selection (before loading a file, if specified)
+# --select options: all, none, invert, front, back
+#
+# With --color[=magenta] change the color of everything selected
+    
+    $ dreg [file] --select[=all] [--color=magenta]
+
+# Groups
+    
+    $ dreg --group[=group]   #  Update "group" based on selection, create if new
+    $ dreg -gi               #  Print group indices and names (NB: ordering can change after adding / updating groups!)
+    $ dreg -gs[=0,1]         #  Select entries from groups, all or a comma-separated list of group indices
+    $ dreg -ug[=0]           #  Update group index (or all groups) with current selection.  With nothing selected -ug removes all groups
+
+# List regions / save to file (-s shows only selected)
+    
+    $ dreg [--save=/tmp/ds9.reg] [-s] [-wcs/-image] [--sky=icrs]
+    
+"""
+
+for a in args:
+    if (a in ["-h", "--help"]) | (len(args) == 1):
+        print(HELP)
+        exit()
+
+pop_args = []
+
+delete = ""
+for a in args:
+    if a in ["-d", "--delete"]:
+        delete = "delete "
+        pop_args.append(a)
+
+selected = ""
+for a in args:
+    if a in ["-s"]:
+        selected = "selected"
+        pop_args.append(a)
+
+# Select before load
+select = None
+for a in args:
+    if a.startswith("--select"):
+        pop_args.append(a)
+        if "=" in a:
+            select = a.split("=")[1]
+        else:
+            select = "all"
+
+        delete = ""
+
+# Change color of selected
+color = None
+for a in args:
+    if a.startswith("--color") | a.startswith("-c"):
+        pop_args.append(a)
+        if "=" in a:
+            color = a.split("=")[1]
+        else:
+            color = "magenta"
+
+# Save file
+savefile = None
+for a in args:
+    if a.startswith("--save"):
+        pop_args.append(a)
+        if "=" in a:
+            savefile = a.split("=")[1]
+        else:
+            savefile = "/tmp/ds9.reg"
+
+extra_commands = []
+
+sky = "icrs"
+for a in args:
+    if a.startswith("--sky"):
+        pop_args.append(a)
+        if "=" in a:
+            sky = a.split("=")[1]
+        else:
+            sky = "icrs"
+
+if "-wcs" in args:
+    pop_args.append("-wcs")
+    extra_commands.append("region system wcs")
+    extra_commands.append(f"region sky {sky}")
+
+elif "-image" in args:
+    pop_args.append("-image")
+    extra_commands.append("region system image")
+
+dolist = False
+for a in args:
+    if a in ["-l", "--list"]:
+        pop_args.append(a)
+        dolist = True
+
+ungroup = False
+for a in args:
+    if a.startswith("--ungroup") | a.startswith("-ug"):
+        pop_args.append(a)
+        ungroup = True
+
+        if "=" in a:
+            ungroup_list = [int(i) for i in a.split("=")[1].split(",")]
+        else:
+            ungroup_list = None
+
+gindex = False
+for a in args:
+    if a in ["-gi", "--gindex"]:
+        pop_args.append(a)
+        gindex = True
+
+gselect = None
+for a in args:
+    if a.startswith("-gs") | a.startswith("--gselect"):
+        pop_args.append(a)
+        if "=" in a:
+            gselect = [int(i) for i in a.split("=")[1].split(",")]
+        else:
+            gselect = []
+
+update_groups = []
+for a in args:
+    if a.startswith("--group"):
+        pop_args.append(a)
+
+        if "=" in a:
+            update_groups = a.split("=")[1].split(",")
+        else:
+            update_groups = ["group"]
+
+for a in pop_args:
+    args.pop(args.index(a))
+
+def parse_raw_groups(raw_groups):
+    groups = []
+    is_open = False
+    for s in raw_groups.split(" "):
+        if s.startswith("{"):
+            is_open = True
+            groups.append([s[1:]])
+        else:
+            if s.endswith("}"):
+                groups[-1].append(s[:-1])
+                is_open = False
+            elif is_open:
+                groups[-1].append(s)
+            else:
+                groups.append([s])
+    
+    groups = [" ".join(g) for g in groups]
+
+    return groups
+
+with ds9samp.ds9samp() as ds9:
+
+    if len(args) >= 2:
+        file_ = args[1]
+        if not file_[0] in ["/"]:
+            file_ = os.path.join(os.getcwd(), file_)
+    else:
+        file_ = None
+
+    commands = []
+
+    if select is not None:
+        commands.append(f"region select {select}")
+
+    raw_groups = ds9.get("region groups")
+
+    if raw_groups is not None:
+        groups = parse_raw_groups(raw_groups)
+    else:
+        groups = []
+
+    if ungroup:
+        for i, group in enumerate(groups):
+            cmd_ = f"region group {{{group}}} update"
+            if ungroup_list is None:
+                commands.append(cmd_)
+            else:
+                if i in ungroup_list:
+                    commands.append(cmd_)
+
+    if gselect is not None:
+        if len(gselect) == 0:
+            gselect = range(len(groups))
+        
+        for i in gselect:
+            if i < len(groups):
+                cmd_ = f"region group {{{groups[i]}}} select"
+                # print(cmd_)
+                commands.append(cmd_)
+
+    for group in update_groups:
+        if group not in groups:
+            commands.append(f"region group {group} new")
+        
+        commands.append(f"region group {group} update")
+        
+    if color is not None:
+        commands.append(f"region color {color}")
+    
+    if file_ is not None:
+        commands.append(f"region {delete} load {file_}")
+
+    commands.extend(extra_commands)
+
+    if savefile is not None:
+        commands.append(f"region save {selected[:-2]} {savefile}")
+
+    if gindex:
+        commands = []
+
+        for i, group in enumerate(groups):
+            print(f"#  i={i:>2}  \"{group}\"")
+            
+    for cmd in commands:
+        print(f"# {cmd}")
+        ds9.set(cmd)
+
+    if dolist:
+        regions = ds9.get(f"regions {selected}")
+        print(regions)

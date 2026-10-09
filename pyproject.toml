@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools >= 77.0.3", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/version.py"
+
+[tool.setuptools]
+script-files = [
+    "scripts/aload"
+]
+
+[project]
+name = "ds9cli"
+# version = "0.1"
+authors = [
+  { name="Gabriel Brammer", email="gbrammer@gmail.com" },
+]
+description = "Small set of helper scripts for interacting with DS9 at the command line"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dependencies = [
+    "astropy",
+    "ds9samp"
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/gbrammer/ds9cli"
+Issues = "https://github.com/gbrammer/ds9cli/issues"
+Repository = "https://github.com/gbrammer/ds9cli.git"
