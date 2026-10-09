@@ -57,7 +57,7 @@ Note: The
 is required for displaying ASDF files.
 
 ```bash
-$ dload
+$ dload -h
 
 Display normal FITS and Roman ASDF files in DS9.
 
@@ -81,7 +81,7 @@ Usage:
 ### ``dreg``
 
 ```bash
-$ dreg
+$ dreg -h
 
 Work with DS9 regions
 
