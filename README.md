@@ -78,4 +78,39 @@ Usage:
   $ dload {file} --frame=1              # frame 1
   $ dload {file} [-rgb] [-r] [-g] [-b]  # rgb channel, -rgb creates new RGB frame
 
-````
+```
+
+### ``dreg``
+
+Work with region files.
+
+```bash
+$ dreg
+
+Manage DS9 regions
+
+Usage:
+
+ # Load a region file, optionally delete existing before loading new
+    
+    $ dreg ds9.reg [-d/--delete]
+    
+ # Run a selection (before loading a file, if specified)
+ # --select options: all, none, invert, front, back
+ #
+ # With --color[=magenta] change the color of everything selected
+    
+    $ dreg [file] --select[=all] [--color=magenta]
+
+ # Groups
+    
+    $ dreg --group[=group]   #  Update "group" based on selection, create if new
+    $ dreg -gi               #  Print group indices and names (NB: ordering can change after adding / updating groups!)
+    $ dreg -gs[=0,1]         #  Select entries from groups, all or a comma-separated list of group indices
+    $ dreg -ug[=0]           #  Update group index (or all groups) with current selection.  With nothing selected -ug removes all groups
+
+ # List regions / save to file (-s shows only selected)
+    
+    $ dreg [--save=/tmp/ds9.reg] [-s] [-wcs/-image] [--sky=icrs]
+
+```
