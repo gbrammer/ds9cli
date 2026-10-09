@@ -1,11 +1,14 @@
 #!/bin/bash
 
-dload $1 -rgb -r
-dscale
+echo "  red: $1"
+dload $1 -r
+dscale -q
 
-dload $2 -rgb -g
-dscale
+echo "green: $2"
+dload $2 -g
+dscale -q
 
-dload $3 -rgb -b
-dscale
+echo " blue: $3"
+dload $3 -b
+dscale -q
 

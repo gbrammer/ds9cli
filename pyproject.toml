@@ -13,6 +13,7 @@ script-files = [
     "scripts/dreg",
     "scripts/dscale",
     "scripts/dset",
+    "scripts/dmark",
     "scripts/drgb",
 ]
 

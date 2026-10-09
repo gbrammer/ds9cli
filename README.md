@@ -111,6 +111,17 @@ Usage:
 
 ```
 
+### ``dmark``
+
+```bash
+Mark a circular region at the central DS9 window position
+
+Usage options:
+
+    $ dmark [-r=10] [-c=cyan] [-s] [Label text]
+    $ dmark [--radius=10] [--color=cyan] [--select] [Label text]
+```
+
 ### ``dscale``
 
 Quick default colorbar scaling.  Defaults work well for pixel values order ~unity [i.e., HST, JWST].
