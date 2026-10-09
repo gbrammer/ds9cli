@@ -3,6 +3,14 @@
 import ds9samp
 import sys
 
+if len(sys.argv) == 1:
+    print("""
+dget: ds9.set()
+
+Usage:  dset [xpa set commands]
+""")
+    exit()
+
 with ds9samp.ds9samp() as ds9:
     
     cmd = ' '.join(sys.argv[1:])

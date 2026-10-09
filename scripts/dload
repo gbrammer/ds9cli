@@ -34,7 +34,7 @@ Usage:
 """
 
 for a in args:
-    if a in ["-h", "--help"]:
+    if (a in ["-h", "--help"]) | (len(args) == 1):
         print(HELP)
         exit()
 
