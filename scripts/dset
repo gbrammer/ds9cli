@@ -5,7 +5,7 @@ import sys
 
 if len(sys.argv) == 1:
     print("""
-dget: ds9.set()
+dset: ds9.set()
 
 Usage:  dset [xpa set commands]
 """)

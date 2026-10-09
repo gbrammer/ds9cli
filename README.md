@@ -17,9 +17,28 @@ $ which dset
 [/python/environment/]/bin/dset
 
 $ dset
-
 dget: ds9.set()
 
 Usage:  dset [xpa set commands]
 ```
 
+## Scripts
+
+### ``dget``, ``dset``
+
+Wrappers around the low-level ``get`` and ``set`` commands:
+
+```bash
+$ dget
+
+dget: ds9.get()
+
+Usage:  dget [xpa get commands]
+
+$ dset
+
+dget: ds9.set()
+
+Usage:  dset [xpa set commands]
+
+```
