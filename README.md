@@ -17,7 +17,7 @@ $ pip install git+https://github.com/gbrammer/ds9cli.git
 
 Verify that the scripts were installed:
 
-```bash
+```
 $ which dset
 [/python/environment/]/bin/dset
 
