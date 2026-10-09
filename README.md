@@ -12,7 +12,7 @@ loading files and easily manipulating the DS9 display.
 ## Installation
 
 ```bash
-$ pip install git+https://https://github.com/gbrammer/ds9cli.git
+$ pip install git+https://github.com/gbrammer/ds9cli.git
 ```
 
 Verify that the scripts were installed:
