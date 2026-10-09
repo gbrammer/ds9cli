@@ -82,12 +82,10 @@ Usage:
 
 ### ``dreg``
 
-Work with region files.
-
 ```bash
 $ dreg
 
-Manage DS9 regions
+Work with DS9 regions
 
 Usage:
 
@@ -109,8 +107,41 @@ Usage:
     $ dreg -gs[=0,1]         #  Select entries from groups, all or a comma-separated list of group indices
     $ dreg -ug[=0]           #  Update group index (or all groups) with current selection.  With nothing selected -ug removes all groups
 
- # List regions / save to file (-s shows only selected)
+ # List [-l/--list] / save [--save] regions (-s shows only selected)
     
-    $ dreg [--save=/tmp/ds9.reg] [-s] [-wcs/-image] [--sky=icrs]
+    $ dreg [--save=/tmp/ds9.reg] [-l/--list] [-s] [-wcs/-image] [--sky=icrs]
 
+```
+
+### ``dscale``
+
+Quick default colorbar scaling.  Defaults work well for pixel values order ~unity [i.e., HST, JWST].
+
+```bash
+$ dscale -h
+
+Autoscale a DS9 window
+
+Usage options:
+
+    $ dscale scale
+    $ dscale min max bkg
+    $ dscale min max bkg scale
+    $ dscale [...] [-q] [--quiet]  #  suppress messages
+    $ dscale [...] --auto[=20]     #  compute median, NMAD scale (default: NMAD x 20)
+```
+
+### ``dmatch``
+
+```bash
+$ dmatch -h
+
+Wrapper around locking DS9 frame parameters
+
+Usage:  dmatch [wcs]
+
+ - frame lock [wcs, image, etc]
+ - lock colorbar
+ - match scale
+ - frame single
 ```
