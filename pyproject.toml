@@ -7,7 +7,12 @@ write_to = "src/version.py"
 
 [tool.setuptools]
 script-files = [
-    "scripts/aload"
+    "scripts/dget",
+    "scripts/dload",
+    "scripts/dmatch",
+    "scripts/dreg",
+    "scripts/dscale",
+    "scripts/dset",
 ]
 
 [project]
