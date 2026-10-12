@@ -136,8 +136,8 @@ Usage options:
     $ dscale scale
     $ dscale min max bkg
     $ dscale min max bkg scale
-    $ dscale [...] [-q] [--quiet]  #  suppress messages
-    $ dscale [...] --auto[=20]     #  compute median, NMAD scale (default: NMAD x 20)
+    $ dscale [...] [-v] [--verbose]  #  print commands
+    $ dscale [...] --auto[=20]       #  compute median, NMAD scale (default: NMAD x 20)
 ```
 
 ### ``dmatch``

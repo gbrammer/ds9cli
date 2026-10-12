@@ -15,8 +15,8 @@ Usage options:
     $ dscale scale
     $ dscale min max bkg
     $ dscale min max bkg scale
-    $ dscale [...] [-q] [--quiet]  #  suppress messages
-    $ dscale [...] --auto[=20]     #  compute median, NMAD scale (default: NMAD x 20)
+    $ dscale [...] [-v] [--verbose] #  print commands
+    $ dscale [...] --auto[=20]      #  compute median, NMAD scale (default: NMAD x 20)
     
 """
 
@@ -27,14 +27,17 @@ for a in args:
 
 pop_args = []
 
-verbose = True
+verbose = False
 for a in args:
-    if a in ["-q", "--quiet"]:
+    if a in ["-v", "--verbose"]:
         pop_args.append(a)
-        verbose = False
+        verbose = True
 
-if verbose:
-    pop_args.append("--verbose")
+rgb = [None]
+for a in args:
+    if a in ["-rgb", "--rgb"]:
+        pop_args.append(a)
+        rgb = ["red", "green", "blue"]
 
 mi = -0.1
 ma = 10
@@ -110,9 +113,13 @@ commands = [
 
 with ds9samp.ds9samp() as ds9:
     
-    for cmd in commands:
-        if verbose:
-            print(cmd)
+    for ch in rgb:
+        if ch is not None:
+            ds9.set(f"rgb channel {ch}")
 
-        ds9.set(cmd)
+        for cmd in commands:
+            if verbose:
+                print(cmd)
+
+            ds9.set(cmd)
     

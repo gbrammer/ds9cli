@@ -24,11 +24,11 @@ for a in args:
 
 pop_args = []
 
-verbose = True
+verbose = False
 for a in args:
-    if a in ["-q", "--quiet"]:
+    if a in ["-v", "--verbose"]:
         pop_args.append(a)
-        verbose = False
+        verbose = True
 
 color = None
 for a in args:

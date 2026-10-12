@@ -2,13 +2,13 @@
 
 echo "  red: $1"
 dload $1 -r
-dscale -q
+dscale
 
 echo "green: $2"
 dload $2 -g
-dscale -q
+dscale
 
 echo " blue: $3"
 dload $3 -b
-dscale -q
+dscale
 

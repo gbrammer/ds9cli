@@ -33,4 +33,4 @@ with ds9samp.ds9samp() as ds9:
     ds9.set(f"frame lock {lock_frame}")
     ds9.set("lock colorbar")
     ds9.set("match scale")
-    
+    ds9.set("tile no")
