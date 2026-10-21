@@ -2,9 +2,12 @@
 
 import os
 import sys
+
+import numpy as np
+
 import astropy.io.fits as pyfits
 import ds9samp
-import numpy as np
+from ds9samp import list_ds9
 
 try:
     import roman_datamodels
@@ -43,6 +46,27 @@ for a in args:
     if a.startswith("--ext"):
         ext = a.split("=")[1]
 
+pop_args = []
+
+def get_client():
+
+    client = list_ds9()[0]
+
+    for i, arg in enumerate(args):
+        if ("fits" in arg) | ("asdf" in arg):
+            continue
+        if arg.startswith('c') & (arg[1] in '123456789'):
+            client = arg
+            pop_args.append(arg)
+
+    return client
+
+client = get_client()
+
+for arg in pop_args:
+    if arg in args:
+        args.pop(args.index(arg))
+
 # Parse extension from xxxxx.asdf[ext]
 file_ = args[1]
 if file_.endswith("]") & ("asdf[" in file_):
@@ -61,7 +85,7 @@ for a in args:
 if "-rgb" in args:
     frame = None
 
-with ds9samp.ds9samp() as ds9:
+with ds9samp.ds9samp(client=client) as ds9:
 
     if frame is not None:
         ds9.set(frame)

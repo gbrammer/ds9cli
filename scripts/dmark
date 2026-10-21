@@ -2,8 +2,10 @@
 
 import sys
 import astropy.io.fits as pyfits
-import ds9samp
 import numpy as np
+
+import ds9samp
+from ds9samp import list_ds9
 
 args = sys.argv.copy()
 
@@ -52,6 +54,19 @@ for a in args:
         if "=" in a:
             size = float(a.split("=")[1])
 
+def get_client():
+
+    client = list_ds9()[0]
+
+    for i, arg in enumerate(args):
+        if arg.startswith('c') & (arg[1] in '123456789'):
+            client = arg
+            pop_args.append(arg)
+
+    return client
+
+client = get_client()
+
 for arg in pop_args:
     if arg in args:
         args.pop(args.index(arg))
@@ -61,7 +76,7 @@ if len(args) > 1:
 else:
     mark_text = None
 
-with ds9samp.ds9samp() as ds9:
+with ds9samp.ds9samp(client=client) as ds9:
     
     xy = ds9.get("pan image").split()
     ds9.set("region system image")

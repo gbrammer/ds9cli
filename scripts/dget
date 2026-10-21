@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import ds9samp
 import sys
+
+import ds9samp
+from ds9samp import list_ds9
 
 if len(sys.argv) == 1:
     print("""
@@ -11,8 +13,28 @@ Usage:  dget [xpa get commands]
 """)
     exit()
 
-with ds9samp.ds9samp() as ds9:
+args = sys.argv.copy()
+pop_args = []
+
+def get_client():
+
+    client = list_ds9()[0]
+
+    for i, arg in enumerate(args):
+        if arg.startswith('c') & (arg[1] in '123456789'):
+            client = arg
+            pop_args.append(arg)
+
+    return client
+
+client = get_client()
+
+for arg in pop_args:
+    if arg in args:
+        args.pop(args.index(arg))
+
+with ds9samp.ds9samp(client=client) as ds9:
     
-    cmd = ' '.join(sys.argv[1:])
+    cmd = ' '.join(args[1:])
     result = ds9.get(cmd)
     print(result)

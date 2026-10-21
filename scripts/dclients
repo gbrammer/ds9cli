@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import ds9samp
+import sys
+
+from ds9samp import list_ds9
+
+clients = list_ds9()
+
+if len(clients) == 0:
+    sys.exit(print("No running DS9 clients found."))
+
+for client in clients:
+    with ds9samp.ds9samp(client=client) as ds9:
+        frame = ds9.get("frame")
+        filen = ds9.get("file")
+        print(f"{client}: frame={frame} {filen}")
+

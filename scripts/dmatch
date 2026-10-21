@@ -3,6 +3,7 @@
 import os
 import sys
 import ds9samp
+from ds9samp import list_ds9
 
 args = sys.argv.copy()
 
@@ -23,12 +24,30 @@ for a in args:
         print(HELP)
         exit()
 
+pop_args = []
+def get_client():
+
+    client = list_ds9()[0]
+
+    for i, arg in enumerate(args):
+        if arg.startswith('c') & (arg[1] in '123456789'):
+            client = arg
+            pop_args.append(arg)
+
+    return client
+
+client = get_client()
+
+for arg in pop_args:
+    if arg in args:
+        args.pop(args.index(arg))
+
 if len(args) > 1:
     lock_frame = args[1]
 else:
     lock_frame = "image"
 
-with ds9samp.ds9samp() as ds9:
+with ds9samp.ds9samp(client=client) as ds9:
     
     ds9.set(f"frame lock {lock_frame}")
     ds9.set("lock colorbar")

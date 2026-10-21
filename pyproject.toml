@@ -15,6 +15,7 @@ script-files = [
     "scripts/dset",
     "scripts/dmark",
     "scripts/drgb",
+    "scripts/dclients",
 ]
 
 [project]

@@ -3,6 +3,7 @@
 import os
 import sys
 import ds9samp
+from ds9samp import list_ds9
 
 args = sys.argv.copy()
 
@@ -148,8 +149,22 @@ for a in args:
         else:
             update_groups = ["group"]
 
+def get_client():
+
+    client = list_ds9()[0]
+
+    for i, arg in enumerate(args):
+        if arg.startswith('c') & (arg[1] in '123456789'):
+            client = arg
+            pop_args.append(arg)
+
+    return client
+
+client = get_client()
+
 for a in pop_args:
-    args.pop(args.index(a))
+    if a in args:
+        args.pop(args.index(a))
 
 def parse_raw_groups(raw_groups):
     groups = []
@@ -171,7 +186,7 @@ def parse_raw_groups(raw_groups):
 
     return groups
 
-with ds9samp.ds9samp() as ds9:
+with ds9samp.ds9samp(client=client) as ds9:
 
     if len(args) >= 2:
         file_ = args[1]
