@@ -62,9 +62,10 @@ def get_client():
     client = list_ds9()[0]
 
     for i, arg in enumerate(args):
-        if arg.startswith('c') & (arg[1] in '123456789'):
-            client = arg
-            pop_args.append(arg)
+        if arg.startswith('c'):
+            if (arg[1] in '123456789'):
+                client = arg
+                pop_args.append(arg)
 
     return client
 
